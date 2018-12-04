@@ -1,7 +1,20 @@
-# missing docstring - please help me out here - how do I do this?
+# missing docstring - please help me out here - what should I do here?
 
 from flask import Flask
 APP = Flask(__name__)
+
+
+# -------------------FAKE DATABASE------------------------------
+# fake skills
+skill_data = {'name': 'Artificial Intelligence', 'id': '1'}
+skills_data = [{'name': 'Artificial Intelligence', 'id': '1'}, {'name':'C++', 'id':'2'},{'name':'Electronics', 'id':'3'}]
+
+
+# fake courses
+course_data =  {'name':'AI in Python','description':'This is a great course','creator':'Udacity', 'id':'1'}
+courses_data = [{'name':'AI in Python','description':'This is a great course','creator':'Udacity', 'id':'1'}, 
+{'name':'Intro to Selfdriving Cars', 'description':'This is an amazing course', 'creator':'Udacity', 'id':'2'}, 
+{'name':'Intro to Electronics','description':'this is a fun course', 'creator':'Coursera', 'id':'3'}]
 
 
 # set up the routing for each page
