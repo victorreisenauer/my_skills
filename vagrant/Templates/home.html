@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>my_skills</title>
+  </head>
+  <body>
+  	<h1>Skills to Learn:</h1>
+  	</br>
+  	</br>
+    <a href='#'><h2>Login</h2></a>
+  	</br>
+    <a href='#'><h2>Add a new skill</h2></a>
+    </br>
+    </br>
+    {%for skill in skills_data%}
+      {{skill.name}}
+  	  </br>
+      <a href='#'>Edit</a>
+      <a href='#'>Delete</a>
+      </br>
+      </br>
+    {% endfor %}
+    </br>
+    </br>
+    </br>
+    <a href='#'><h4>Visit our APIs</h4></a>
+    </br>
+  </body>
+</html>

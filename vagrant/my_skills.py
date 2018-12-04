@@ -1,6 +1,6 @@
 # missing docstring - please help me out here - what should I do here?
 
-from flask import Flask
+from flask import Flask, render_template
 APP = Flask(__name__)
 
 
@@ -23,61 +23,66 @@ courses_data = [{'name':'AI in Python','description':'This is a great course','c
 @APP.route('/home/')
 def home_page():
     """routing for home page"""
-    return "This is the home page"
+    return render_template('home.html', skills_data=skills_data)
 
 
 @APP.route('/<skill>/')
-def all_category(skill):
+def show_skill(skill):
     """routing for the page of a specific skill"""
-    return "This is the page to learn {}".format(skill)
+    return render_template('show_skill.html', skill=skill, course_data=course_data)
 
 
 @APP.route('/<skill>/edit/')
-def edit_category(skill):
+def edit_skill(skill):
     """routing to edit a specific skill"""
-    return "This is the editing page of the skill {}".format(skill)
+    return render_template('edit_skill.html', skill=skill)
 
 
 @APP.route('/<skill>/delete/')
-def delete_category(skill):
+def delete_skill(skill):
     """routing to delete a specific skill"""
-    return "This is the deleting page of {}".format(skill)
+    return render_template('delete_skill.html', skill=skill)
 
 
 @APP.route('/skill/new/')
-def new_category():
+def new_skill():
     """routing to create a new category"""
-    return "here you can add a new skill to learn"
+    return render_template('new_skill.html')
 
 
 @APP.route('/login/')
 def login_page():
     """routing for the designated login page"""
-    return "This is the login page"
+    return render_template('login.html')
 
 
 @APP.route('/<skill>/<course>')
-def item_page(skill, course):
-    """routing for the courses in a skillset"""
-    return "This is the description page of the {1} course to learn {0}".format(skill, course)
+def course_page(skill, course):
+    """routing for a specific course in a skillset"""
+    return render_template('course_page.html', skill=skill, course=course, courses_data=courses_data)
 
 
 @APP.route('/<skill>/course/new/')
-def new_item(skill):
+def new_course(skill):
     """routing for a new course in skillset"""
-    return "Add a new course to learn {}".format(skill)
+    return render_template('new_course.html', skill=skill, courses_data=courses_data)
 
 
 @APP.route('/<skill>/<course>/edit/')
-def edit_item(skill, course):
+def edit_course(skill, course):
     """routing to edit a course in a skillset"""
-    return "This is the edit page of {1}s {0} course".format(skill, course)
+    return render_template('edit_course.html', skill=skill, course=course, courses_data=courses_data)
 
 
 @APP.route('/<skill>/<course>/delete/')
-def delete_item(skill, course):
+def delete_course(skill, course):
     """routing to delete an item in a category"""
-    return "This is the delete page of {1}s {0} course".format(skill, course)
+    return render_template('delete_course.html', skill=skill, course=course, courses_data=courses_data)
+
+@APP.route('/apis/')
+def apis():
+    """routing to a page that lists our apis"""
+    return render_template('apis.html')
 
 
 
