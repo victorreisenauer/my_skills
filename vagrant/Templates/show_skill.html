@@ -1,14 +1,23 @@
 <!DOCTYPE html>
 <html>
   <body>
-    <h1>Learn {{skill}}:</h1>
+    <h1>Learn {{skill_item.name}}:</h1>
     </br>
     </br>
     </br>
-    {{course_data.name}}
-    </br>
-    {{course_data.description}}
-    </br>
-    {{course_data.creator}}
+    {% for i in course_lst %}
+<div>
+<p>{{i.name}}</p>
+
+<p>{{i.creator}}</p>
+
+<p> {{i.price}} </p>
+</div>
+</br>
+</br>
+
+
+{% endfor %}
+
   </body>
 </html>

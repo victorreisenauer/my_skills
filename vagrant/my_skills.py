@@ -3,18 +3,17 @@
 from flask import Flask, render_template
 APP = Flask(__name__)
 
+# imports to connect script to database
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
-# -------------------FAKE DATABASE------------------------------
-# fake skills
-skill_data = {'name': 'Artificial Intelligence', 'id': '1'}
-skills_data = [{'name': 'Artificial Intelligence', 'id': '1'}, {'name':'C++', 'id':'2'},{'name':'Electronics', 'id':'3'}]
+from database_setup import SkillTable, Base, CourseTable
 
-
-# fake courses
-course_data =  {'name':'AI in Python','description':'This is a great course','creator':'Udacity', 'id':'1'}
-courses_data = [{'name':'AI in Python','description':'This is a great course','creator':'Udacity', 'id':'1'}, 
-{'name':'Intro to Selfdriving Cars', 'description':'This is an amazing course', 'creator':'Udacity', 'id':'2'}, 
-{'name':'Intro to Electronics','description':'this is a fun course', 'creator':'Coursera', 'id':'3'}]
+# connect script to my_skills.db database
+engine = create_engine('sqlite:///my_skills.db')
+Base.metadata.bind = engine
+DBSession = sessionmaker(bind=engine)
+session = DBSession()
 
 
 # set up the routing for each page
@@ -23,13 +22,18 @@ courses_data = [{'name':'AI in Python','description':'This is a great course','c
 @APP.route('/home/')
 def home_page():
     """routing for home page"""
-    return render_template('home.html', skills_data=skills_data)
+    skill_lst = session.query(SkillTable).all()
+    return render_template('home.html', skill_lst=skill_lst)
 
 
 @APP.route('/<skill>/')
 def show_skill(skill):
     """routing for the page of a specific skill"""
-    return render_template('show_skill.html', skill=skill, course_data=course_data)
+    first_letter = skill[0]
+    skill = first_letter.upper() + skill[1:]
+    skill_item = session.query(SkillTable).filter_by(name=skill).one()
+    course_lst = session.query(CourseTable).filter_by(skill_id=skill_item.id).all()
+    return render_template('show_skill.html', skill_item=skill_item, course_lst=course_lst)
 
 
 @APP.route('/<skill>/edit/')
@@ -56,10 +60,14 @@ def login_page():
     return render_template('login.html')
 
 
-@APP.route('/<skill>/<course>')
+@APP.route('/<skill>/<int:course>')
 def course_page(skill, course):
     """routing for a specific course in a skillset"""
-    return render_template('course_page.html', skill=skill, course=course, courses_data=courses_data)
+    first_letter = skill[0]
+    skill = first_letter.upper() + skill[1:]
+    skill_item = session.query(SkillTable).filter_by(name=skill).one()
+    course_item = session.query(CourseTable).filter_by(id=course).one()
+    return render_template('course_page.html', skill_item=skill_item, course_item=course_item)
 
 
 @APP.route('/<skill>/course/new/')
