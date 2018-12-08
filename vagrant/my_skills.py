@@ -1,6 +1,6 @@
 # missing docstring - please help me out here - what should I do here?
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for, flash
 APP = Flask(__name__)
 
 # imports to connect script to database
@@ -33,7 +33,7 @@ def show_skill(skill):
     skill = first_letter.upper() + skill[1:]
     skill_item = session.query(SkillTable).filter_by(name=skill).one()
     course_lst = session.query(CourseTable).filter_by(skill_id=skill_item.id).all()
-    return render_template('show_skill.html', skill_item=skill_item, course_lst=course_lst)
+    return render_template('show_skill.html', skill=skill, skill_item=skill_item, course_lst=course_lst)
 
 
 @APP.route('/<skill>/edit/')
