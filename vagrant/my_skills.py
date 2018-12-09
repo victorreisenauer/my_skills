@@ -1,7 +1,8 @@
 # missing docstring - please help me out here - what should I do here?
 
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 APP = Flask(__name__)
+APP.secret_key = "VerySecretKey"
 
 # imports to connect script to database
 from sqlalchemy import create_engine
@@ -48,9 +49,14 @@ def delete_skill(skill):
     return render_template('delete_skill.html', skill=skill)
 
 
-@APP.route('/skill/new/')
+@APP.route('/skill/new/', methods=['GET', 'POST'])
 def new_skill():
     """routing to create a new category"""
+    if request.method == 'POST':
+        add_skill = SkillTable(name=request.form['name'])
+        session.add(add_skill)
+        session.commit()
+        return redirect(url_for('home_page'))
     return render_template('new_skill.html')
 
 
@@ -70,10 +76,15 @@ def course_page(skill, course):
     return render_template('course_page.html', skill_item=skill_item, course_item=course_item)
 
 
-@APP.route('/<skill>/course/new/')
+@APP.route('/<skill>/course/new/', methods=['Get', 'POST'])
 def new_course(skill):
     """routing for a new course in skillset"""
-    return render_template('new_course.html', skill=skill, courses_data=courses_data)
+    if request.method == 'POST':
+        add_course = CourseTable(name=request.form['name'])
+        session.add(add_course)
+        session.commit()
+        return redirect(url_for('show_skill', skill=skill))
+    return render_template('new_course.html', skill=skill)
 
 
 @APP.route('/<skill>/<course>/edit/')
@@ -91,6 +102,15 @@ def delete_course(skill, course):
 def apis():
     """routing to a page that lists our apis"""
     return render_template('apis.html')
+
+
+@APP.route('/api/<skill>/JSON')
+def course_api(skill):
+    first_letter = skill[0]
+    skill = first_letter.upper() + skill[1:]
+    skill_item = session.query(SkillTable).filter_by(name=skill).one()
+    items = session.query(CourseTable).filter_by(skill_id=skill_item.id).all()
+    return jsonify(CourseItems=[i.serialize for i in items])
 
 
 
