@@ -6,5 +6,11 @@
     </br>
     </br>
     What is it you want to learn? 
+
+  <form action="{{ url_for('new_skill')}}" method= 'post'>
+    <p>Name:</p>
+      <input type='text' size='30' name='name'>
+      <input type='submit' value='Create'>
+  </form>
   </body>
 </html>

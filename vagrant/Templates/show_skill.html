@@ -5,9 +5,14 @@
     </br>
     </br>
     </br>
+    <a href='{{url_for('new_course', skill=skill_item.name)}}'>New Course</a>
+    </br>
+    </br>
     {% for i in course_lst %}
 <div>
-<a href='{{url_for('course_page', skill=skill_item.name, course=i.id)}}'<p>{{i.name}}</p></a>
+    <a href='{{url_for('course_page', skill=skill_item.name, course=i.id)}}'<p>{{i.name}}</p></a>
+    <a href='{{url_for('edit_course', skill=skill_item.name, course=i.id)}}'>Edit</a>
+    <a href='{{url_for('delete_course', skill=skill_item.name, course=i.id)}}'>Delete</a>
 
 <p>{{i.creator}}</p>
 

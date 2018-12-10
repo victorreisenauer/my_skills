@@ -43,10 +43,17 @@ def edit_skill(skill):
     return render_template('edit_skill.html', skill=skill)
 
 
-@APP.route('/<skill>/delete/')
+@APP.route('/<skill>/delete/', methods=['GET', 'POST'])
 def delete_skill(skill):
     """routing to delete a specific skill"""
-    return render_template('delete_skill.html', skill=skill)
+    first_letter = skill[0]
+    skill = first_letter.upper() + skill[1:]
+    skill_item = session.query(SkillTable).filter_by(name=skill).first()
+    if request.method == 'POST':
+        session.delete(skill_item)
+        session.commit()
+        return redirect(url_for('home_page'))
+    return render_template('delete_skill.html', skill_item=skill_item)
 
 
 @APP.route('/skill/new/', methods=['GET', 'POST'])
@@ -76,11 +83,14 @@ def course_page(skill, course):
     return render_template('course_page.html', skill_item=skill_item, course_item=course_item)
 
 
-@APP.route('/<skill>/course/new/', methods=['Get', 'POST'])
+@APP.route('/<skill>/course/new/', methods=['GET', 'POST'])
 def new_course(skill):
     """routing for a new course in skillset"""
+    first_letter = skill[0]
+    skill = first_letter.upper() + skill[1:]
+    skill_item = session.query(SkillTable).filter_by(name=skill).one()
     if request.method == 'POST':
-        add_course = CourseTable(name=request.form['name'])
+        add_course = CourseTable(name=request.form['name'], skill_id=skill_item.id)
         session.add(add_course)
         session.commit()
         return redirect(url_for('show_skill', skill=skill))
@@ -90,13 +100,21 @@ def new_course(skill):
 @APP.route('/<skill>/<course>/edit/')
 def edit_course(skill, course):
     """routing to edit a course in a skillset"""
-    return render_template('edit_course.html', skill=skill, course=course, courses_data=courses_data)
+    return render_template('edit_course.html', skill=skill, course=course)
 
 
 @APP.route('/<skill>/<course>/delete/')
 def delete_course(skill, course):
     """routing to delete an item in a category"""
-    return render_template('delete_course.html', skill=skill, course=course, courses_data=courses_data)
+    """first_letter = skill[0]
+                skill = first_letter.upper() + skill[1:]
+                skill_item = session.query(SkillTable).filter_by(name=skill).one()
+                course_item = session.query(CourseTable).filter_by(id=course).one()
+                if request.method == 'POST':
+                    session.delete(course_item)
+                    session.commit()
+                    return redirect(url_for('show_skill', skill=skill))"""
+    return render_template('delete_course.html', skill_item=skill_item, course_item=course_item)
 
 @APP.route('/apis/')
 def apis():
