@@ -11,7 +11,7 @@ from sqlalchemy.orm import sessionmaker
 from database_setup import SkillTable, Base, CourseTable
 
 # connect script to my_skills.db database
-engine = create_engine('sqlite:///my_skills.db')
+engine = create_engine('sqlite:///my_skills.db', connect_args={'check_same_thread': False})
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
