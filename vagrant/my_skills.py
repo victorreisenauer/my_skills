@@ -30,8 +30,6 @@ def home_page():
 @APP.route('/<skill>/')
 def show_skill(skill):
     """routing for the page of a specific skill"""
-    first_letter = skill[0]
-    skill = first_letter.upper() + skill[1:]
     skill_item = session.query(SkillTable).filter_by(name=skill).one()
     course_lst = session.query(CourseTable).filter_by(skill_id=skill_item.id).all()
     return render_template('show_skill.html', skill=skill, skill_item=skill_item, course_lst=course_lst)
@@ -46,8 +44,6 @@ def edit_skill(skill):
 @APP.route('/<skill>/delete/', methods=['GET', 'POST'])
 def delete_skill(skill):
     """routing to delete a specific skill"""
-    first_letter = skill[0]
-    skill = first_letter.upper() + skill[1:]
     skill_item = session.query(SkillTable).filter_by(name=skill).first()
     if request.method == 'POST':
         session.delete(skill_item)
@@ -76,8 +72,6 @@ def login_page():
 @APP.route('/<skill>/<int:course>')
 def course_page(skill, course):
     """routing for a specific course in a skillset"""
-    first_letter = skill[0]
-    skill = first_letter.upper() + skill[1:]
     skill_item = session.query(SkillTable).filter_by(name=skill).one()
     course_item = session.query(CourseTable).filter_by(id=course).one()
     return render_template('course_page.html', skill_item=skill_item, course_item=course_item)
@@ -86,8 +80,6 @@ def course_page(skill, course):
 @APP.route('/<skill>/course/new/', methods=['GET', 'POST'])
 def new_course(skill):
     """routing for a new course in skillset"""
-    first_letter = skill[0]
-    skill = first_letter.upper() + skill[1:]
     skill_item = session.query(SkillTable).filter_by(name=skill).one()
     if request.method == 'POST':
         add_course = CourseTable(name=request.form['name'], skill_id=skill_item.id)
@@ -106,9 +98,7 @@ def edit_course(skill, course):
 @APP.route('/<skill>/<course>/delete/')
 def delete_course(skill, course):
     """routing to delete an item in a category"""
-    """first_letter = skill[0]
-                skill = first_letter.upper() + skill[1:]
-                skill_item = session.query(SkillTable).filter_by(name=skill).one()
+    """         skill_item = session.query(SkillTable).filter_by(name=skill).one()
                 course_item = session.query(CourseTable).filter_by(id=course).one()
                 if request.method == 'POST':
                     session.delete(course_item)
@@ -124,8 +114,6 @@ def apis():
 
 @APP.route('/api/<skill>/JSON')
 def course_api(skill):
-    first_letter = skill[0]
-    skill = first_letter.upper() + skill[1:]
     skill_item = session.query(SkillTable).filter_by(name=skill).one()
     items = session.query(CourseTable).filter_by(skill_id=skill_item.id).all()
     return jsonify(CourseItems=[i.serialize for i in items])
