@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html>
   <body>
-    <h1>Delete the {{course}} ({{skill}}) course</h1>
+    <h1>Delete {{course_item.name}}?</h1>
     </br>
     </br>
     </br>
-    Are you sure you want to delete the {{course}} ({{skill}}) course?
+    Are you sure you want to delete your skill "{{course_item.name}}"({{skill_item.name}})?
+
+    <form action="{{ url_for('delete_course', skill=skill, course=course) }}" method='POST'>
+      <input type='submit' value='Delete'>
+      </form>
   </body>
 </html>
