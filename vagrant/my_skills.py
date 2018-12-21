@@ -56,7 +56,7 @@ def delete_skill(skill):
         session.delete(skill_item)
         session.commit()
         return redirect(url_for('home_page'))
-    return render_template('delete_skill.html', skill_item=skill_item)
+    return render_template('delete_skill.html', skill=skill, skill_item=skill_item)
 
 
 @APP.route('/skill/new/', methods=['GET', 'POST'])
@@ -81,7 +81,7 @@ def course_page(skill, course):
     """routing for a specific course in a skillset"""
     skill_item = session.query(SkillTable).filter_by(name=skill).one()
     course_item = session.query(CourseTable).filter_by(id=course).one()
-    return render_template('course_page.html', skill_item=skill_item, course_item=course_item)
+    return render_template('course_page.html', skill=skill, skill_item=skill_item, course_item=course_item)
 
 
 @APP.route('/<skill>/course/new/', methods=['GET', 'POST'])
@@ -119,7 +119,7 @@ def delete_course(skill, course):
         session.delete(course_item)
         session.commit()
         return redirect(url_for('show_skill', skill=skill, course=course))
-    return render_template('delete_course.html', skill_item=skill_item, course_item=course_item)
+    return render_template('delete_course.html', skill=skill, course=course, skill_item=skill_item, course_item=course_item)
 
 @APP.route('/apis/')
 def apis():

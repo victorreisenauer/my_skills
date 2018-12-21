@@ -9,6 +9,7 @@
 
     <form action="{{ url_for('delete_course', skill=skill, course=course) }}" method='POST'>
       <input type='submit' value='Delete'>
-      </form>
+    </form>
+    <a href = '{{url_for('show_skill', skill=skill)}}'> Cancel </a>
   </body>
 </html>
