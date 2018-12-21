@@ -8,8 +8,20 @@
     You can add the new course here:
 
       <form action="{{ url_for('new_course', skill=skill) }}" method='post'>
+
     <p>Name:</p>
-      <input type='text' size='30' name='name'>
+      <input type='text' size='30' name='name' required>
+
+    <p>Description:</p>
+      <textarea name = 'description' rows='5' cols='40' required></textarea>
+
+    <p>Price:</p>
+      <input type = 'text' size = '8' name='price' required>
+
+    <p>Creator:</p>
+      <input type='text' size='30' name='creator'>
+
+      
       <input type='submit' value='Create'>
   </form>
   <a href = '{{url_for('show_skill', skill=skill)}}'> Cancel </a>

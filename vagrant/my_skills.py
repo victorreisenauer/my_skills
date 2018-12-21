@@ -89,7 +89,9 @@ def new_course(skill):
     """routing for a new course in skillset"""
     skill_item = session.query(SkillTable).filter_by(name=skill).one()
     if request.method == 'POST':
-        add_course = CourseTable(name=request.form['name'], skill_id=skill_item.id)
+        add_course = CourseTable(name=request.form['name'], description=request.form['description'],\
+                                 price=request.form['price'], creator=request.form['creator'],\
+                                 skill_id=skill_item.id)
         session.add(add_course)
         session.commit()
         return redirect(url_for('show_skill', skill=skill))
@@ -104,6 +106,12 @@ def edit_course(skill, course):
     if request.method == 'POST':
         if request.form['name']:
             course_item.name = request.form['name']
+        if request.form['description']:
+            course_item.description = request.form['description']
+        if request.form['price']:
+            course_item.price = request.form['price']
+        if request.form['creator']:
+            course_item.creator = request.form['creator']
         session.add(course_item)
         session.commit()
         return redirect(url_for('show_skill', skill=skill))

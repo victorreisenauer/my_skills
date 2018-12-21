@@ -5,9 +5,22 @@
     </br>
     </br>
     </br>
-        <form action="{{ url_for('edit_course', skill=skill, course= course) }}" method='POST'>
-        <p>Name:</p>
-      <input type='text' size='30' name='name'>
+    <form action="{{ url_for('edit_course', skill=skill, course= course) }}" method='POST'>
+
+
+      <p>Name:</p>
+        <input type='text' size='30' name='name'>
+
+      <p>Description:</p>
+        <textarea name = 'description' rows='5' cols='40'></textarea>
+
+      <p>Price:</p>
+        <input type = 'text' size = '8' name='price'>
+
+      <p>Creator:</p>
+        <input type='text' size='30' name='creator'>
+
+
       <input type='submit' value='Edit'>
       </form>
     <a href = '{{url_for('show_skill', skill=skill)}}'> Cancel </a>
