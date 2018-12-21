@@ -96,7 +96,7 @@ def new_course(skill):
     return render_template('new_course.html', skill=skill)
 
 
-@APP.route('/<skill>/<int:course>/edit/')
+@APP.route('/<skill>/<int:course>/edit/', methods=['GET', 'POST'])
 def edit_course(skill, course):
     """routing to edit a course in a skillset"""
     skill_item = session.query(SkillTable).filter_by(name=skill).one()
@@ -110,7 +110,7 @@ def edit_course(skill, course):
     return render_template('edit_course.html', skill=skill, course=course, skill_item=skill_item, course_item=course_item)
 
 
-@APP.route('/<skill>/<course>/delete/')
+@APP.route('/<skill>/<course>/delete/', methods=['GET', 'POST'])
 def delete_course(skill, course):
     """routing to delete an item in a category"""
     skill_item = session.query(SkillTable).filter_by(name=skill).one()
