@@ -129,6 +129,7 @@ def apis():
 
 @APP.route('/api/<skill>/JSON')
 def course_api(skill):
+    """API endpoint for the courses of a specific skill"""
     skill_item = session.query(SkillTable).filter_by(name=skill).one()
     items = session.query(CourseTable).filter_by(skill_id=skill_item.id).all()
     return jsonify(CourseItems=[i.serialize for i in items])
