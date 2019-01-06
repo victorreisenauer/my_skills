@@ -52,7 +52,10 @@ def edit_skill(skill):
 def delete_skill(skill):
     """routing to delete a specific skill"""
     skill_item = session.query(SkillTable).filter_by(name=skill).one()
+    course_lst = session.query(CourseTable).filter_by(skill_id=skill_item.id).all()
     if request.method == 'POST':
+        for x in course_lst:
+            session.delete(x)
         session.delete(skill_item)
         session.commit()
         return redirect(url_for('home_page'))
