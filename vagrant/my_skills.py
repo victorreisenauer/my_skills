@@ -92,9 +92,17 @@ def new_course(skill):
     """routing for a new course in skillset"""
     skill_item = session.query(SkillTable).filter_by(name=skill).one()
     if request.method == 'POST':
+        iterator = 1
+        switch = True
+        while switch:   # loop is used to always assign the lowest possible id to database entry
+            try:        # there should not be unused id's in the database
+                session.query(CourseTable).filter_by(id=iterator).one()
+                iterator += 1
+            except Exception:
+                switch = False
         add_course = CourseTable(name=request.form['name'], description=request.form['description'],\
                                  price=request.form['price'], creator=request.form['creator'],\
-                                 skill_id=skill_item.id)
+                                 skill_id=skill_item.id, id=iterator)
         session.add(add_course)
         session.commit()
         return redirect(url_for('show_skill', skill=skill))
