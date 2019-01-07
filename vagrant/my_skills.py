@@ -38,7 +38,7 @@ APPLICATION_NAME = "my_skills App"
 def home_page():
     """routing for home page"""
     skill_lst = session.query(SkillTable).all()
-    return render_template('home.html', skill_lst=skill_lst)
+    return render_template('home.html', skill_lst=skill_lst, login_session=login_session)
 
 
 @APP.route('/<skill>/')

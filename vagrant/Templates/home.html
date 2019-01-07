@@ -7,7 +7,11 @@
   	<h1>Skills to Learn:</h1>
   	</br>
   	</br>
+    {% if 'username' in login_session %}
+    <a href='{{url_for('gdisconnect')}}'><h2>Logout</h2></a>
+    {% else %}
     <a href='{{url_for('show_login')}}'><h2>Login</h2></a>
+    {%endif%}
   	</br>
     <a href='{{url_for('new_skill')}}'><h2>Add a new skill</h2></a>
     </br>
