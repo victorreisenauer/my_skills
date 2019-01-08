@@ -12,7 +12,7 @@
     {% else %}
     <a href='{{url_for('show_login')}}'><h2>Login</h2></a>
     {%endif%}
-  	</br>
+    <a href='{{url_for('apis')}}'>Visit APIs</a>
     <a href='{{url_for('new_skill')}}'><h2>Add a new skill</h2></a>
     </br>
     </br>
@@ -21,7 +21,6 @@
   	  </br>
       <a href='{{url_for('edit_skill', skill=skill_item.name)}}'>Edit</a>
       <a href='{{url_for('delete_skill', skill=skill_item.name)}}'>Delete</a>
-      <a href='{{url_for('course_api', skill=skill_item.name)}}'>Visit API</a>
       </br>
       </br>
     {% endfor %}

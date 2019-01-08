@@ -164,13 +164,18 @@ def apis():
     """routing to a page that lists our apis"""
     return render_template('apis.html')
 
+@APP.route('/apis/skills/JSON')
+def skills_api():
+    """API endpoint for all skills in database"""
+    skill_lst = session.query(SkillTable).all()
+    return jsonify(SkillItems=[i.serialize for i in skill_lst])
 
-@APP.route('/api/<skill>/JSON')
-def course_api(skill):
-    """API endpoint for the courses of a specific skill"""
-    skill_item = session.query(SkillTable).filter_by(name=skill).one()
-    items = session.query(CourseTable).filter_by(skill_id=skill_item.id).all()
-    return jsonify(CourseItems=[i.serialize for i in items])
+
+@APP.route('/apis/courses/JSON')
+def courses_api():
+    """API endpoint for all courses"""
+    course_lst = session.query(CourseTable).all()
+    return jsonify(CourseItems=[i.serialize for i in course_lst])
 
 
 
