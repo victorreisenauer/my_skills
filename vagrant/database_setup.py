@@ -12,14 +12,15 @@ class SkillTable(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
+    user_email = Column(String(100), nullable=False)
 
     @property
     def serialize(self):
-       """Return object data in easily serializeable format"""
-       return {
-           'name'         : self.name,
-           'id'           : self.id,
-       }
+        """Return object data in easily serializeable format"""
+        return {
+            'name'         : self.name,
+            'id'           : self.id,
+        }
 
 class CourseTable(Base):
     __tablename__ = 'course_table'
@@ -31,16 +32,17 @@ class CourseTable(Base):
     creator = Column(String(250))
     skill_id = Column(Integer, ForeignKey('skill_table.id'))
     skill = relationship(SkillTable)
+    user_email = Column(String(100), nullable=False)
 
     @property
     def serialize(self):
         """return data in serializeable format"""
         return {
-            'name' : self.name,
+            'name'         : self.name,
             'description'  : self.description,
-            'id' : self.id,
-            'price' : self.price,
-            'creator' : self.creator
+            'id'           : self.id,
+            'price'        : self.price,
+            'creator'      : self.creator,
         }
 
 engine = create_engine('sqlite:///my_skills.db')

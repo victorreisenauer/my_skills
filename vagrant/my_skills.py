@@ -87,6 +87,7 @@ def new_skill():
         return redirect('/login/')
     if request.method == 'POST':
         add_skill = SkillTable(name=request.form['name'])
+        add_skill = SkillTable(user_email=login_session['email'])
         session.add(add_skill)
         session.commit()
         return redirect(url_for('home_page'))
@@ -117,7 +118,7 @@ def new_course(skill):
                 switch = False
         add_course = CourseTable(name=request.form['name'], description=request.form['description'],\
                                  price=request.form['price'], creator=request.form['creator'],\
-                                 skill_id=skill_item.id, id=iterator)
+                                 skill_id=skill_item.id, id=iterator, user_email=login_session['email'])
         session.add(add_course)
         session.commit()
         return redirect(url_for('show_skill', skill=skill))
@@ -305,6 +306,20 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
+
+
+@APP.route('/del_database/', methods=['GET'])
+def delete_database():
+    """routing to delete a specific skill"""
+    skill_lst = session.query(SkillTable).all()
+    course_lst = session.query(CourseTable).all()
+    for x in skill_lst:
+        session.delete(x)
+    session.commit()
+    for x in course_lst:
+        session.delete(x)
+    session.commit()
+    return redirect(url_for('home_page'))
 
 
 
