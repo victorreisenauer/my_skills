@@ -1,32 +1,39 @@
-# missing docstring - please help me out here - what should I do here?
+"""main script for the my_skills web app"""
 
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
-APP = Flask(__name__)
-APP.secret_key = "VerySecretKey"
+import random  # used for key based client authentication
+import string
+import json
+
+from flask import Flask, render_template, request, redirect, url_for, \
+                  flash, jsonify
+from flask import session as login_session  # used for login funcitonality
+from flask import make_response
 
 # imports to connect script to database
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
+# additional imports for login functionality
+from oauth2client.client import flow_from_clientsecrets
+from oauth2client.client import FlowExchangeError
+import httplib2
+import requests
+
+# required instances to use database in application
 from database_setup import SkillTable, Base, CourseTable
 
+# create the flask app
+APP = Flask(__name__)
+APP.secret_key = "VerySecretKey"
+
 # connect script to my_skills.db database
-engine = create_engine('sqlite:///my_skills.db', connect_args={'check_same_thread': False})
+engine = create_engine('sqlite:///my_skills.db',
+                       connect_args={'check_same_thread': False})
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-# imports to add login functionality
-from flask import session as login_session
-import random
-import string
-from oauth2client.client import flow_from_clientsecrets
-from oauth2client.client import FlowExchangeError
-import httplib2
-import json
-from flask import make_response
-import requests
-
-
+# Client ID is used for google authentication
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "my_skills App"
@@ -38,7 +45,8 @@ APPLICATION_NAME = "my_skills App"
 def home_page():
     """routing for home page"""
     skill_lst = session.query(SkillTable).all()
-    return render_template('home.html', skill_lst=skill_lst, login_session=login_session)
+    return render_template('home.html', skill_lst=skill_lst,
+                           login_session=login_session)
 
 
 @APP.route('/<skill>/')
@@ -46,7 +54,8 @@ def show_skill(skill):
     """routing for the page of a specific skill"""
     skill_item = session.query(SkillTable).filter_by(name=skill).one()
     course_lst = session.query(CourseTable).filter_by(skill_id=skill_item.id).all()
-    return render_template('show_skill.html', skill=skill, skill_item=skill_item, course_lst=course_lst)
+    return render_template('show_skill.html', skill=skill, skill_item=skill_item,
+                           course_lst=course_lst)
 
 
 @APP.route('/<skill>/edit/', methods=['GET', 'POST'])
@@ -55,8 +64,8 @@ def edit_skill(skill):
     skill_item = session.query(SkillTable).filter_by(name=skill).one()
     if 'username' not in login_session:                     # check if the user is logged in
         return redirect('/login/')
-    if skill_item.user_email != login_session['email']:         # see if current user is the creator of
-        return "Sorry, you are not the creator of this - you can't edit it!"    # the item 
+    if skill_item.user_email != login_session['email']:         # see if current user is the creator
+        return "Sorry, you are not the creator of this - you can't edit it!"    # of the item
     if request.method == 'POST':
         if request.form['name']:
             skill_item.name = request.form['name']
@@ -73,11 +82,11 @@ def delete_skill(skill):
     course_lst = session.query(CourseTable).filter_by(skill_id=skill_item.id).all()
     if 'username' not in login_session:                     # check if the user is logged in
         return redirect('/login/')
-    if skill_item.user_email != login_session['email']:         # see if current user is the creator of
-        return "Sorry, you are not the creator of this - you can't edit it!"    # the item 
+    if skill_item.user_email != login_session['email']:         # see if current user is the creator
+        return "Sorry, you are not the creator of this - you can't edit it!"    # of the item
     if request.method == 'POST':
-        for x in course_lst:
-            session.delete(x)
+        for course in course_lst:
+            session.delete(course)
         session.delete(skill_item)
         session.commit()
         return redirect(url_for('home_page'))
@@ -102,14 +111,15 @@ def course_page(skill, course):
     """routing for a specific course in a skillset"""
     skill_item = session.query(SkillTable).filter_by(name=skill).one()
     course_item = session.query(CourseTable).filter_by(id=course).one()
-    return render_template('course_page.html', skill=skill, skill_item=skill_item, course_item=course_item)
+    return render_template('course_page.html', skill=skill, skill_item=skill_item, \
+                                               course_item=course_item)
 
 
 @APP.route('/<skill>/course/new/', methods=['GET', 'POST'])
 def new_course(skill):
     """routing for a new course in skillset"""
     skill_item = session.query(SkillTable).filter_by(name=skill).one()
-    if 'username' not in login_session:             
+    if 'username' not in login_session:
         return redirect('/login/')
     if request.method == 'POST':
         iterator = 1
@@ -120,9 +130,10 @@ def new_course(skill):
                 iterator += 1
             except Exception:
                 switch = False
-        add_course = CourseTable(name=request.form['name'], description=request.form['description'],\
-                                 price=request.form['price'], creator=request.form['creator'],\
-                                 skill_id=skill_item.id, id=iterator, user_email=login_session['email'])
+        add_course = CourseTable(name=request.form['name'], description=request.form['description'],
+                                 price=request.form['price'], creator=request.form['creator'],
+                                 skill_id=skill_item.id, id=iterator,
+                                 user_email=login_session['email'])
         session.add(add_course)
         session.commit()
         return redirect(url_for('show_skill', skill=skill))
@@ -136,8 +147,8 @@ def edit_course(skill, course):
     course_item = session.query(CourseTable).filter_by(id=course).one()
     if 'username' not in login_session:                     # check if the user is logged in
         return redirect('/login/')
-    if skill_item.user_email != login_session['email']:         # see if current user is the creator of
-        return "Sorry, you are not the creator of this - you can't edit it!"    # the item 
+    if skill_item.user_email != login_session['email']:         # see if current user is the creator
+        return "Sorry, you are not the creator of this - you can't edit it!"    # of the item
     if request.method == 'POST':
         if request.form['name']:
             course_item.name = request.form['name']
@@ -150,7 +161,8 @@ def edit_course(skill, course):
         session.add(course_item)
         session.commit()
         return redirect(url_for('show_skill', skill=skill))
-    return render_template('edit_course.html', skill=skill, course=course, skill_item=skill_item, course_item=course_item)
+    return render_template('edit_course.html', skill=skill, course=course, skill_item=skill_item,
+                           course_item=course_item)
 
 
 @APP.route('/<skill>/<course>/delete/', methods=['GET', 'POST'])
@@ -160,13 +172,14 @@ def delete_course(skill, course):
     course_item = session.query(CourseTable).filter_by(id=course).one()
     if 'username' not in login_session:                     # check if the user is logged in
         return redirect('/login/')
-    if skill_item.user_email != login_session['email']:         # see if current user is the creator of
-        return "Sorry, you are not the creator of this - you can't edit it!"    # the item 
+    if skill_item.user_email != login_session['email']:         # see if current user is the creator
+        return "Sorry, you are not the creator of this - you can't edit it!"    # of the item
     if request.method == 'POST':
         session.delete(course_item)
         session.commit()
         return redirect(url_for('show_skill', skill=skill, course=course))
-    return render_template('delete_course.html', skill=skill, course=course, skill_item=skill_item, course_item=course_item)
+    return render_template('delete_course.html', skill=skill, course=course, skill_item=skill_item,
+                           course_item=course_item)
 
 @APP.route('/apis/')
 def apis():
@@ -202,6 +215,7 @@ def show_login():
 
 @APP.route('/gconnect', methods=['POST'])
 def gconnect():
+    """work with google to authorize user"""
     # Validate state token
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
@@ -278,7 +292,8 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: \
+                                                                    150px;-moz-border-radius: 150px;"> '
     flash("you are now logged in as %s" % login_session['username'])
     print("done!")
     return output
@@ -286,13 +301,14 @@ def gconnect():
 
 @APP.route('/gdisconnect')
 def gdisconnect():
+    """disconnect from google login authorization (log out the user)"""
     access_token = login_session.get('access_token')
     if access_token is None:
         print('Access Token is None')
         response = make_response(json.dumps('Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    print('In gdisconnect access token is %s'), access_token
+    print('In gdisconnect access token is {}', format(access_token))
     print('User name is: ')
     print(login_session['username'])
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
@@ -309,10 +325,9 @@ def gdisconnect():
         response = make_response(json.dumps('Successfully disconnected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
-    else:
-        response = make_response(json.dumps('Failed to revoke token for given user.', 400))
-        response.headers['Content-Type'] = 'application/json'
-        return response
+    response = make_response(json.dumps('Failed to revoke token for given user.', 400))
+    response.headers['Content-Type'] = 'application/json'
+    return response
 
 
 

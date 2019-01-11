@@ -1,5 +1,5 @@
-import os
-import sys
+"""create (not yet populate) the database for the my_skills app"""
+
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -25,8 +25,8 @@ class SkillTable(Base):
 class CourseTable(Base):
     __tablename__ = 'course_table'
 
-    name = Column(String(80), nullable = False)
-    id = Column(Integer, primary_key = True)
+    name = Column(String(80), nullable=False)
+    id = Column(Integer, primary_key=True)
     description = Column(String(250))
     price = Column(String(8))
     creator = Column(String(250))
