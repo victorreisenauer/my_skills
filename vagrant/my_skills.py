@@ -53,9 +53,11 @@ def show_skill(skill):
 def edit_skill(skill):
     """routing to edit a specific skill"""
     skill_item = session.query(SkillTable).filter_by(name=skill).one()
+    if 'username' not in login_session:                     # check if the user is logged in
+        return redirect('/login/')
+    if skill_item.user_email != login_session['email']:         # see if current user is the creator of
+        return "Sorry, you are not the creator of this - you can't edit it!"    # the item 
     if request.method == 'POST':
-        if 'username' not in login_session:
-            return redirect('/login/')
         if request.form['name']:
             skill_item.name = request.form['name']
         session.add(skill_item)
@@ -69,9 +71,11 @@ def delete_skill(skill):
     """routing to delete a specific skill"""
     skill_item = session.query(SkillTable).filter_by(name=skill).one()
     course_lst = session.query(CourseTable).filter_by(skill_id=skill_item.id).all()
+    if 'username' not in login_session:                     # check if the user is logged in
+        return redirect('/login/')
+    if skill_item.user_email != login_session['email']:         # see if current user is the creator of
+        return "Sorry, you are not the creator of this - you can't edit it!"    # the item 
     if request.method == 'POST':
-        if 'username' not in login_session:
-            return redirect('/login/')
         for x in course_lst:
             session.delete(x)
         session.delete(skill_item)
@@ -105,7 +109,7 @@ def course_page(skill, course):
 def new_course(skill):
     """routing for a new course in skillset"""
     skill_item = session.query(SkillTable).filter_by(name=skill).one()
-    if 'username' not in login_session:
+    if 'username' not in login_session:             
         return redirect('/login/')
     if request.method == 'POST':
         iterator = 1
@@ -130,8 +134,10 @@ def edit_course(skill, course):
     """routing to edit a course in a skillset"""
     skill_item = session.query(SkillTable).filter_by(name=skill).one()
     course_item = session.query(CourseTable).filter_by(id=course).one()
-    if 'username' not in login_session:
+    if 'username' not in login_session:                     # check if the user is logged in
         return redirect('/login/')
+    if skill_item.user_email != login_session['email']:         # see if current user is the creator of
+        return "Sorry, you are not the creator of this - you can't edit it!"    # the item 
     if request.method == 'POST':
         if request.form['name']:
             course_item.name = request.form['name']
@@ -152,8 +158,10 @@ def delete_course(skill, course):
     """routing to delete an item in a category"""
     skill_item = session.query(SkillTable).filter_by(name=skill).one()
     course_item = session.query(CourseTable).filter_by(id=course).one()
-    if 'username' not in login_session:
+    if 'username' not in login_session:                     # check if the user is logged in
         return redirect('/login/')
+    if skill_item.user_email != login_session['email']:         # see if current user is the creator of
+        return "Sorry, you are not the creator of this - you can't edit it!"    # the item 
     if request.method == 'POST':
         session.delete(course_item)
         session.commit()
